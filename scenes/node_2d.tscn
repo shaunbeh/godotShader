@@ -1,18 +1,53 @@
-[gd_scene load_steps=5 format=3 uid="uid://c5jfbn1nrxr5n"]
+[gd_scene load_steps=13 format=3 uid="uid://c5jfbn1nrxr5n"]
 
 [ext_resource type="Shader" path="res://shaders/newTest.gdshader" id="1_dv4ar"]
 [ext_resource type="Texture2D" uid="uid://cd4wuu47nvqmx" path="res://icon.svg" id="2_loc6o"]
 [ext_resource type="Script" path="res://scripts/Sprite2D.gd" id="3_nmwy2"]
+[ext_resource type="Shader" path="res://scenes/simple_water.gdshader" id="4_6vsj1"]
+[ext_resource type="Script" path="res://scenes/MeshInstance3D.gd" id="5_log1j"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_rn7v0"]
 shader = ExtResource("1_dv4ar")
 shader_parameter/size = null
 shader_parameter/blue = 0.5
 
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ngfdy"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_rml5c"]
+noise = SubResource("FastNoiseLite_ngfdy")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_5qhog"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ptw53"]
+as_normal_map = true
+noise = SubResource("FastNoiseLite_5qhog")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6cgf5"]
+render_priority = 0
+shader = ExtResource("4_6vsj1")
+shader_parameter/height_scale = 0.5
+shader_parameter/noise = SubResource("NoiseTexture2D_rml5c")
+shader_parameter/normalmap = SubResource("NoiseTexture2D_ptw53")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_bwalp"]
+material = SubResource("ShaderMaterial_6cgf5")
+subdivide_width = 32
+subdivide_depth = 32
+
 [node name="Node2D" type="Node2D"]
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 material = SubResource("ShaderMaterial_rn7v0")
-position = Vector2(69, 68)
+position = Vector2(285, 268)
 texture = ExtResource("2_loc6o")
 script = ExtResource("3_nmwy2")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_bwalp")
+script = ExtResource("5_log1j")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.102904, 0.528713, 0.0486505)
+light_energy = 0.497
+light_indirect_energy = 1.251
+light_volumetric_fog_energy = 4.099
